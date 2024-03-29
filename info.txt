@@ -1,0 +1,44 @@
+Step by step
+
+In order to create our project, we create the virtual environment
+
+1. Creating the virtual environment
+    python -m venv venv
+
+2. To start the virtual environmen use:
+    venv/Scripts/activate
+
+2*. To activate the virtual environment in Linux:
+    source venv/bin/activate
+
+3. To work with FastAPI:
+    pip install fastapi
+
+4. To work with uvicorn:
+    pip install uvicorn
+
+5. To open the application  (uvicorn NAME_OF_THE_APP:app):
+    uvicorn main:app
+
+To reload the application after changes, we can use the following
+    uvicorn main:app --reload
+
+To change the port to initalize the application:
+    uvicorn main:app --reload --port 4000
+
+To be able to open the app from other device in the same network where we are work:
+    uvicorn main:app --reload --port 4000 --host 0.0.0.0
+
+6. To see the documentation in the web bowser write the path and /docs.
+    http://127.0.0.1:4000/docs
+
+7. Methods to consider with FastAPI:
+
+    POST create a new resource.
+    PUT modify an existing resource.
+    GET consult the resource.
+    DELETE eliminate the existing resource.
+
+
+. Intall sqlalquemy
+    pip install sqlalchemy
