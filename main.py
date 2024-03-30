@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
@@ -11,27 +11,27 @@ series = [
         "title": "Game of Thrones",
         "genre": ["fantasy", "drama"],
         "synopsis": "Based on George R.R. Martin's novels, it follows the power struggles among noble families as they vie for control of the Iron Throne of the Seven Kingdoms of Westeros.",
-        "main Cast": ["Emilia Clarke", "Kit Harington", "Peter Dinklage", "Lena Headey"],
+        "main cast": ["Emilia Clarke", "Kit Harington", "Peter Dinklage", "Lena Headey"],
         "year start": 2011,
-        "year finalization": 2019
+        "year end": 2019
     },
     {
         "id" : 2,
         "title": "Breaking Bad",
         "genre": ["crime", "drama", "thriller"],
         "synopsis": "A high school chemistry teacher turned methamphetamine manufacturer partners with a former student to build a drug empire while dealing with personal and professional challenges.",
-        "main Cast": ["Bryan Cranston", "Aaron Paul", "Anna Gunn", "Dean Norris"],
+        "main cast": ["Bryan Cranston", "Aaron Paul", "Anna Gunn", "Dean Norris"],
         "year start": 2008,
-        "year finalization": 2013
+        "year end": 2013
     },
     {
         "id" : 3,
         "title": "Friends",
         "genre": ["comedy", "romance"],
-        "Synopsis": "Follows the lives, relationships, and comedic antics of six friends living in Manhattan.",
-        "main Cast": ["Jennifer Aniston", "Courteney Cox", "Lisa Kudrow", "Matt LeBlanc", "Matthew Perry", "David Schwimmer"],
+        "synopsis": "Follows the lives, relationships, and comedic antics of six friends living in Manhattan.",
+        "main cast": ["Jennifer Aniston", "Courteney Cox", "Lisa Kudrow", "Matt LeBlanc", "Matthew Perry", "David Schwimmer"],
         "year start": 1994,
-        "year finalization": 2004
+        "year end": 2004
     },
 ]
 
@@ -45,13 +45,15 @@ def message():
 def get_series():
     return series
 
+# Path parameters
 @app.get('/series/{id}', tags = ['series'])
 def get_movie(id : int):
     for serie in series:
-        if serie["id"] == id:
+        if serie['id'] == id:
             return serie
     return []
 
+# Query parameters
 @app.get('/series_one/', tags = ['series'])
 def get_serie_by_genre(genre : str):
     for serie in series:
@@ -71,3 +73,18 @@ def get_series_by_year_of_start(year_start : int):
             return item
     return ['There is no information']
 '''
+
+
+# POST method
+@app.post('/series', tags = ['series'])
+def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(), synopsis : str = Body(), main_cast : list = Body(), year_start : int = Body(), year_end : int = Body()):
+    series.append({
+        "id": id,
+        "title": title,
+        "genre": genre,
+        "synopsis": synopsis,
+        "main cast": main_cast,
+        "year start": year_start,
+        "year end": year_end
+    })
+    return series
