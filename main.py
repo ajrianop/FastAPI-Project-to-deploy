@@ -88,3 +88,18 @@ def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(),
         "year end": year_end
     })
     return series
+
+
+# PUT
+@app.put('/series/{id}', tags=['series'])
+def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsis : str = Body(), main_cast : list = Body(), year_start : int = Body(), year_end : int = Body()):
+     
+     for serie in series:
+          if serie['id'] == id:
+            serie['title'] = title 
+            serie['genre'] = genre 
+            serie['synopsis'] = synopsis 
+            serie['main cast'] = main_cast
+            serie['year start'] = year_start
+            serie['year end'] = year_end
+            return series
