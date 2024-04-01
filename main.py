@@ -104,7 +104,7 @@ def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsi
             serie['year end'] = year_end
             return series
 
-# DELETE
+# DELETE method to delete a serie
 @app.delete('/series/{id}' , tags = ['series'])
 
 def delete_series(id : int):
