@@ -75,7 +75,7 @@ def get_series_by_year_of_start(year_start : int):
 '''
 
 
-# POST method
+# POST method to create new items
 @app.post('/series', tags = ['series'])
 def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(), synopsis : str = Body(), main_cast : list = Body(), year_start : int = Body(), year_end : int = Body()):
     series.append({
@@ -90,7 +90,7 @@ def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(),
     return series
 
 
-# PUT
+# PUT method to modify information
 @app.put('/series/{id}', tags=['series'])
 def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsis : str = Body(), main_cast : list = Body(), year_start : int = Body(), year_end : int = Body()):
      
@@ -102,4 +102,13 @@ def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsi
             serie['main cast'] = main_cast
             serie['year start'] = year_start
             serie['year end'] = year_end
+            return series
+
+# DELETE
+@app.delete('/series/{id}' , tags = ['series'])
+
+def delete_series(id : int):
+    for serie in series:
+        if serie['id'] == id:
+            series.remove(serie)
             return series
