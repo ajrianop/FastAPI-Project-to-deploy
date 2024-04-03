@@ -1,9 +1,22 @@
 from fastapi import FastAPI, Body
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
 app.title = "Project of TV series with FastAPI"
 app.version = "0.0.1"
+
+# Generating a class
+class Serie(BaseModel):
+    id : Optional[int] = None
+    title : str
+    genre : list
+    synopsis : str
+    main_cast : list
+    year_start : int
+    year_end : int
+
 
 series = [
     {
@@ -76,6 +89,8 @@ def get_series_by_year_of_start(year_start : int):
 
 
 # POST method to create new items
+'''
+# The first form to create new items.
 @app.post('/series', tags = ['series'])
 def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(), synopsis : str = Body(), main_cast : list = Body(), year_start : int = Body(), year_end : int = Body()):
     series.append({
@@ -87,11 +102,15 @@ def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(),
         "year start": year_start,
         "year end": year_end
     })
+    return series'''
+# To create new items but avoiding to write every entry to generate new values, we can use the class created before Serie
+@app.post('/series', tags = ['series'])
+def create_serie(serie : Serie):
+    series.append(serie)
     return series
 
-
 # PUT method to modify information
-@app.put('/series/{id}', tags=['series'])
+'''@app.put('/series/{id}', tags=['series'])
 def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsis : str = Body(), main_cast : list = Body(), year_start : int = Body(), year_end : int = Body()):
      
      for serie in series:
@@ -103,6 +122,20 @@ def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsi
             serie['year start'] = year_start
             serie['year end'] = year_end
             return series
+'''
+@app.put('/series/{id}', tags=['series'])
+def update_movie(id : int , serie : Serie):
+     
+     for serie in series:
+          if serie['id'] == id:
+            serie['title'] = serie.title 
+            serie['genre'] = serie.genre 
+            serie['synopsis'] = serie.synopsis 
+            serie['main cast'] = serie.main_cast
+            serie['year start'] = serie.year_start
+            serie['year end'] = serie.year_end
+            return series
+
 
 # DELETE method to delete a serie
 @app.delete('/series/{id}' , tags = ['series'])

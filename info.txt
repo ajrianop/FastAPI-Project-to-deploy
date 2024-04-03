@@ -42,3 +42,5 @@ To be able to open the app from other device in the same network where we are wo
 
 . Intall sqlalquemy
     pip install sqlalchemy
+
+8. The use of the pydantic library is beneficial for generating data schemas to streamline various processes with the API.
