@@ -126,14 +126,14 @@ def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsi
 @app.put('/series/{id}', tags=['series'])
 def update_movie(id : int , serie : Serie):
      
-     for serie in series:
-          if serie['id'] == id:
-            serie['title'] = serie.title 
-            serie['genre'] = serie.genre 
-            serie['synopsis'] = serie.synopsis 
-            serie['main cast'] = serie.main_cast
-            serie['year start'] = serie.year_start
-            serie['year end'] = serie.year_end
+     for item in series:
+          if item['id'] == id:
+            item['title'] = serie.title 
+            item['genre'] = serie.genre 
+            item['synopsis'] = serie.synopsis 
+            item['main cast'] = serie.main_cast
+            item['year start'] = serie.year_start
+            item['year end'] = serie.year_end
             return series
 
 
