@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Body
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 app = FastAPI()
@@ -10,13 +10,31 @@ app.version = "0.0.1"
 # Generating a class
 class Serie(BaseModel):
     id : Optional[int] = None
-    title : str
+    title : str = Field(min_length= 5 , max_length = 20) #This line restricts input to minimum 5 digits and at most 20 digits only
     genre : list
     synopsis : str
     main_cast : list
-    year_start : int
-    year_end : int
+    year_start : int = Field(le = 2024)
+    year_end : int = Field(le = 2024)
+    #year_end : int = Field(default = 2000, le = 2024)
 
+    #To define default values we use the following subclass
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "id" : 1,
+                    "title" : "This is a serie",
+                    "genre" : ["Uknown"],
+                    "synopsis": "Without a synopsis",
+                    "main_cast" : ["Uknown"],
+                    "year_start" : 1990,
+                    "year_end" : 2000
+                }
+            ]
+        }
+    }
+    
 
 series = [
     {
