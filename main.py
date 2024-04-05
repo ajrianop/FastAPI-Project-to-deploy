@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Path , Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
@@ -18,7 +18,7 @@ class Serie(BaseModel):
     year_end : int = Field(le = 2024)
     #year_end : int = Field(default = 2000, le = 2024)
 
-    #To define default values we use the following subclass
+    #To define default values we use
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -78,7 +78,7 @@ def get_series():
 
 # Path parameters
 @app.get('/series/{id}', tags = ['series'])
-def get_movie(id : int):
+def get_serie(id : int = Path(ge = 1, le = 2000)):
     for serie in series:
         if serie['id'] == id:
             return serie
@@ -86,7 +86,7 @@ def get_movie(id : int):
 
 # Query parameters
 @app.get('/series_one/', tags = ['series'])
-def get_serie_by_genre(genre : str):
+def get_serie_by_genre(genre : str = Query(min_length = 4 , max_length = 20)):
     for serie in series:
         if genre in serie['genre']:
             return serie
