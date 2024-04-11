@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Body, Path , Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional
+from typing import Optional, List
 
 app = FastAPI()
 app.title = "Project of TV series with FastAPI"
@@ -72,30 +72,30 @@ def message():
     return HTMLResponse('<h1>App working!<h1>')
 
 # Creating new paths
-@app.get('/series', tags = ['series'])
-def get_series():
-    return series
+@app.get('/series', tags = ['series'], response_model = List[Serie])
+def get_series() -> List[Serie]:
+    return JSONResponse(content = series)
 
 # Path parameters
-@app.get('/series/{id}', tags = ['series'])
-def get_serie(id : int = Path(ge = 1, le = 2000)):
+@app.get('/series/{id}', tags = ['series'] , response_model = Serie)
+def get_serie(id : int = Path(ge = 1, le = 2000)) -> Serie:
     for serie in series:
         if serie['id'] == id:
-            return serie
-    return []
+            return JSONResponse(content = serie)
+    return JSONResponse(content = [])
 
 # Query parameters
-@app.get('/series_one/', tags = ['series'])
-def get_serie_by_genre(genre : str = Query(min_length = 4 , max_length = 20)):
+@app.get('/series_one/', tags = ['series'] , response_model = Serie)
+def get_serie_by_genre(genre : str = Query(min_length = 4 , max_length = 20)) -> Serie:
     for serie in series:
         if genre in serie['genre']:
-            return serie
-    return ['There is no information']
+            return JSONResponse(content = serie)
+    return JSONResponse(content = [])
 
-@app.get('/series_all/', tags = ['series'])
-def get_series_by_genre(genre : str):
+@app.get('/series_all/', tags = ['series'] ,response_model = List[Serie])
+def get_series_by_genre(genre : str) -> List[Serie]:
     series_filtered_genre = [serie for serie in series if genre in serie['genre']]
-    return series_filtered_genre
+    return JSONResponse(content = series_filtered_genre)
 '''
 @app.get('/series/', tags = ['series'])
 def get_series_by_year_of_start(year_start : int):
@@ -122,10 +122,11 @@ def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(),
     })
     return series'''
 # To create new items but avoiding to write every entry to generate new values, we can use the class created before Serie
-@app.post('/series', tags = ['series'])
-def create_serie(serie : Serie):
+@app.post('/series', tags = ['series'], response_model = dict)
+def create_serie(serie : Serie) -> dict:
     series.append(serie)
-    return series
+    #return series
+    return JSONResponse(content = {"message" : "The movie has been recorded."})
 
 # PUT method to modify information
 '''@app.put('/series/{id}', tags=['series'])
@@ -141,8 +142,8 @@ def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsi
             serie['year end'] = year_end
             return series
 '''
-@app.put('/series/{id}', tags=['series'])
-def update_movie(id : int , serie : Serie):
+@app.put('/series/{id}', tags=['series'] , response_model = dict)
+def update_movie(id : int , serie : Serie) -> dict:
      
      for item in series:
           if item['id'] == id:
@@ -152,14 +153,16 @@ def update_movie(id : int , serie : Serie):
             item['main cast'] = serie.main_cast
             item['year start'] = serie.year_start
             item['year end'] = serie.year_end
-            return series
+            #return series
+            return JSONResponse(content = {"message" : "TThe movie has been modified."})
 
 
 # DELETE method to delete a serie
-@app.delete('/series/{id}' , tags = ['series'])
+@app.delete('/series/{id}' , tags = ['series'], response_model = dict)
 
-def delete_series(id : int):
+def delete_series(id : int) -> dict:
     for serie in series:
         if serie['id'] == id:
             series.remove(serie)
-            return series
+            #return series
+            return JSONResponse(content = {"message" : "TThe movie has been deleted."})
