@@ -72,9 +72,9 @@ def message():
     return HTMLResponse('<h1>App working!<h1>')
 
 # Creating new paths
-@app.get('/series', tags = ['series'], response_model = List[Serie])
+@app.get('/series', tags = ['series'], response_model = List[Serie] , status_code = 200)
 def get_series() -> List[Serie]:
-    return JSONResponse(content = series)
+    return JSONResponse(status_code = 200 , content = series)
 
 # Path parameters
 @app.get('/series/{id}', tags = ['series'] , response_model = Serie)
@@ -82,7 +82,7 @@ def get_serie(id : int = Path(ge = 1, le = 2000)) -> Serie:
     for serie in series:
         if serie['id'] == id:
             return JSONResponse(content = serie)
-    return JSONResponse(content = [])
+    return JSONResponse(status_code = 404 , content = [])
 
 # Query parameters
 @app.get('/series_one/', tags = ['series'] , response_model = Serie)
@@ -122,11 +122,11 @@ def create_serie(id : int = Body(), title : str = Body(), genre : list = Body(),
     })
     return series'''
 # To create new items but avoiding to write every entry to generate new values, we can use the class created before Serie
-@app.post('/series', tags = ['series'], response_model = dict)
+@app.post('/series', tags = ['series'], response_model = dict , status_code = 201)
 def create_serie(serie : Serie) -> dict:
     series.append(serie)
     #return series
-    return JSONResponse(content = {"message" : "The movie has been recorded."})
+    return JSONResponse(status_code = 201 , content = {"message" : "The movie has been recorded."})
 
 # PUT method to modify information
 '''@app.put('/series/{id}', tags=['series'])
@@ -142,7 +142,7 @@ def update_movie(id : int , title : str = Body(), genre : list = Body(), synopsi
             serie['year end'] = year_end
             return series
 '''
-@app.put('/series/{id}', tags=['series'] , response_model = dict)
+@app.put('/series/{id}', tags=['series'] , response_model = dict , status_code = 200)
 def update_movie(id : int , serie : Serie) -> dict:
      
      for item in series:
@@ -154,15 +154,15 @@ def update_movie(id : int , serie : Serie) -> dict:
             item['year start'] = serie.year_start
             item['year end'] = serie.year_end
             #return series
-            return JSONResponse(content = {"message" : "TThe movie has been modified."})
+            return JSONResponse(status_code = 200 , content = {"message" : "TThe movie has been modified."})
 
 
 # DELETE method to delete a serie
-@app.delete('/series/{id}' , tags = ['series'], response_model = dict)
+@app.delete('/series/{id}' , tags = ['series'], response_model = dict, status_code = 200)
 
 def delete_series(id : int) -> dict:
     for serie in series:
         if serie['id'] == id:
             series.remove(serie)
             #return series
-            return JSONResponse(content = {"message" : "TThe movie has been deleted."})
+            return JSONResponse(status_code = 200 , content = {"message" : "TThe movie has been deleted."})

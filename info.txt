@@ -45,7 +45,7 @@ To be able to open the app from other device in the same network where we are wo
 
 8. The use of the pydantic library is beneficial for generating data schemas to streamline various processes with the API.
 
-9. For information about status response, see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+9. For information about status codes, see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
 Informational responses (100 – 199)
 Successful responses (200 – 299)
