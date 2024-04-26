@@ -2,10 +2,16 @@ from fastapi import FastAPI, Body, Path , Query
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
+from jwt_manager import create_token
 
 app = FastAPI()
 app.title = "Project of TV series with FastAPI"
 app.version = "0.0.1"
+
+# Creating a new class which allows us to save user information
+class  User(BaseModel):
+    email : str
+    password : str
 
 # Generating a class
 class Serie(BaseModel):
@@ -70,6 +76,12 @@ series = [
 @app.get('/', tags = ['Home'])
 def message():
     return HTMLResponse('<h1>App working!<h1>')
+
+# Create a new route to capture data of the user
+@app.post('/login', tags = ['auth'])
+def login(user : User):
+    return user
+
 
 # Creating new paths
 @app.get('/series', tags = ['series'], response_model = List[Serie] , status_code = 200)
