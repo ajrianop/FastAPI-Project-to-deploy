@@ -78,7 +78,7 @@ class Serie(BaseModel):
         }
     }
     
-
+""
 series = [
     {
         "id" : 1,
