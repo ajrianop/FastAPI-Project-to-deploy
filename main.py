@@ -1,12 +1,22 @@
-from fastapi import FastAPI, Body, Path , Query
+from fastapi import Depends, FastAPI, Body, HTTPException, Path , Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
-from jwt_manager import create_token
+from jwt_manager import create_token, validate_token
+from fastapi.security import HTTPBearer
 
 app = FastAPI()
 app.title = "Project of TV series with FastAPI"
 app.version = "0.0.1"
+
+# Function to authenticate the user to do the request
+class JWTBearer(HTTPBearer):
+    async def __call__(self, request: Request):
+        auth =  await super().__call__(request)
+        data = validate_token(auth.credentials)
+        if data['email'] != "admin@gmail.com":
+            raise HTTPException(status_code = 403, detail = "Invalid credentials")
+
 
 # Creating a new class which allows us to save user information
 class  User(BaseModel):
@@ -29,14 +39,41 @@ class Serie(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "id" : 1,
+                    "id" : 0,
                     "title" : "This is a serie",
                     "genre" : ["Uknown"],
                     "synopsis": "Without a synopsis",
                     "main_cast" : ["Uknown"],
                     "year_start" : 1990,
                     "year_end" : 2000
-                }
+                },
+                {
+                    "id" : 1,
+                    "title": "Game of Thrones",
+                    "genre": ["fantasy", "drama"],
+                    "synopsis": "Based on George R.R. Martin's novels, it follows the power struggles among noble families as they vie for control of the Iron Throne of the Seven Kingdoms of Westeros.",
+                    "main_cast": ["Emilia Clarke", "Kit Harington", "Peter Dinklage", "Lena Headey"],
+                    "year_start": 2011,
+                    "year_end": 2019
+                },
+                {
+                    "id" : 2,
+                    "title": "Breaking Bad",
+                    "genre": ["crime", "drama", "thriller"],
+                    "synopsis": "A high school chemistry teacher turned methamphetamine manufacturer partners with a former student to build a drug empire while dealing with personal and professional challenges.",
+                    "main cast": ["Bryan Cranston", "Aaron Paul", "Anna Gunn", "Dean Norris"],
+                    "year start": 2008,
+                    "year end": 2013
+                 },
+                 {
+                     "id" : 3,
+                    "title": "Friends",
+                    "genre": ["comedy", "romance"],
+                    "synopsis": "Follows the lives, relationships, and comedic antics of six friends living in Manhattan.",
+                    "main cast": ["Jennifer Aniston", "Courteney Cox", "Lisa Kudrow", "Matt LeBlanc", "Matthew Perry", "David Schwimmer"],
+                    "year start": 1994,
+                    "year end": 2004
+                 },
             ]
         }
     }
@@ -80,11 +117,13 @@ def message():
 # Create a new route to capture data of the user
 @app.post('/login', tags = ['auth'])
 def login(user : User):
-    return user
+    if user.email == "admin@gmail.com" and user.password == "admin":
+        token : str = create_token(user.model_dump()) #Creating the token using model_dump()
+    return JSONResponse(status_code = 200, content=token)
 
 
 # Creating new paths
-@app.get('/series', tags = ['series'], response_model = List[Serie] , status_code = 200)
+@app.get('/series', tags = ['series'], response_model = List[Serie] , status_code = 200, dependencies = [Depends(JWTBearer())])
 def get_series() -> List[Serie]:
     return JSONResponse(status_code = 200 , content = series)
 
